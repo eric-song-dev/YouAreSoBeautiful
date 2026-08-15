@@ -40,21 +40,23 @@
 
 ```bash
 git clone https://github.com/eric-song-dev/dsh-ikun-pet && cd dsh-ikun-pet
-dsh plugin add "$PWD"
+dsh plugin add "$PWD" --profile web
 ```
 
 **Option B: remote one-liner** (for users)
 
 ```bash
-dsh plugin add github:eric-song-dev/dsh-ikun-pet
-# or: dsh plugin add https://github.com/eric-song-dev/dsh-ikun-pet.git
+dsh plugin add github:eric-song-dev/dsh-ikun-pet --profile web
+# or: dsh plugin add https://github.com/eric-song-dev/dsh-ikun-pet.git --profile web
 ```
 
 **Option C: npm** (prebuilt — installs without the `allowBuilds` build-approval step)
 
 ```bash
-dsh plugin add dsh-ikun-pet
+dsh plugin add dsh-ikun-pet --profile web
 ```
+
+> 💡 If your profile isn't named `web`, swap `--profile web` for your own profile name in the commands above.
 
 Then restart `dsh web` and refresh the browser. Verify:
 
@@ -87,8 +89,8 @@ Everything lives in the plugin line's `config` inside the bundled `cordis.patch.
 ## 🗑 Uninstall / 🔄 Update
 
 ```bash
-dsh plugin remove dsh-ikun-pet     # uninstall (bundles are reconciled automatically), then restart dsh web
-# update: cd <repo dir> && git pull && dsh plugin add "$PWD"
+dsh plugin remove dsh-ikun-pet --profile web     # uninstall (bundles are reconciled automatically), then restart dsh web
+# update: cd <repo dir> && git pull && dsh plugin add "$PWD" --profile web
 ```
 
 ## 🧪 Session-level install (dynamic plugin)

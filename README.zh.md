@@ -32,21 +32,23 @@
 
 ```bash
 git clone https://github.com/eric-song-dev/dsh-ikun-pet && cd dsh-ikun-pet
-dsh plugin add "$PWD"
+dsh plugin add "$PWD" --profile web
 ```
 
 **方式 B：远程一条命令**（适合纯使用者）
 
 ```bash
-dsh plugin add github:eric-song-dev/dsh-ikun-pet
-# 或：dsh plugin add https://github.com/eric-song-dev/dsh-ikun-pet.git
+dsh plugin add github:eric-song-dev/dsh-ikun-pet --profile web
+# 或：dsh plugin add https://github.com/eric-song-dev/dsh-ikun-pet.git --profile web
 ```
 
 **方式 C：npm 一条命令**（预构建安装，免 allowBuilds 构建授权）
 
 ```bash
-dsh plugin add dsh-ikun-pet
+dsh plugin add dsh-ikun-pet --profile web
 ```
+
+> 💡 如果你的 profile 名不是 `web`，把上面命令里的 `--profile web` 换成你的 profile 名。
 
 装完重启 `dsh web`，浏览器刷新即可。验证：
 
@@ -78,8 +80,8 @@ curl -s  http://127.0.0.1:3080/plugins/dsh-ikun-pet/client.js   # client bundle�
 ## 🗑 卸载 / 🔄 更新
 
 ```bash
-dsh plugin remove dsh-ikun-pet     # 卸载（bundles 层自动对账），然后重启 dsh web
-# 更新：cd <仓库目录> && git pull && dsh plugin add "$PWD"
+dsh plugin remove dsh-ikun-pet --profile web     # 卸载（bundles 层自动对账），然后重启 dsh web
+# 更新：cd <仓库目录> && git pull && dsh plugin add "$PWD" --profile web
 ```
 
 ## 🧪 临时安装（动态插件，会话级）
