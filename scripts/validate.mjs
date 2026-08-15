@@ -1,4 +1,4 @@
-// beauty-dive-progress · 深潜进度桌宠 · 仓库完整性校验
+// dsh-ikun-pet · ikun 桌宠 · 仓库完整性校验
 // 用法：node scripts/validate.mjs
 // 检查：素材存在且格式正确、插件源码结构正确、精灵图尺寸符合 8×9 契约
 import { readFileSync, existsSync } from 'node:fs'
@@ -40,8 +40,8 @@ if (existsSync(voicePath)) {
 
 // 2. 插件源码：动态插件格式，函数体以 return { 开头，且包含 apply(ctx)
 for (const [name, mustContain] of [
-  ['src/host.js', ['apply(ctx)', 'beauty-dive-state', 'beauty-dive-voice', 'beauty-dive-goal', 'beauty_dive_debug', 'webServer.register']],
-  ['src/client.js', ['apply(ctx)', 'conversation.input.dock', 'beauty-dive-voice', 'beauty-dive-goal', 'MODEL', 'STAGES', 'DiveProgress', 'DONE_TEXT']],
+  ['src/host.js', ['apply(ctx)', 'ikun-pet-state', 'ikun-pet-voice', 'ikun-pet-goal', 'ikun_pet_debug', 'webServer.register']],
+  ['src/client.js', ['apply(ctx)', 'conversation.input.dock', 'ikun-pet-voice', 'ikun-pet-goal', 'MODEL', 'STAGES', 'DiveProgress', 'DONE_TEXT']],
 ]) {
   const p = join(root, name)
   ok(existsSync(p), `${name} 存在`)
@@ -57,7 +57,7 @@ for (const [name, mustContain] of [
 // 3. 永久插件源码：lib/ 下的 Host 入口与 Client bundle
 for (const [name, mustContain] of [
   ['lib/host.js', ['module.exports', "inject: ['timer', 'webServer', 'fs']", 'webServer.register', 'playVoice', 'agents']],
-  ['lib/client.js', ['__ModuleLoader__.load', "id: 'dsh-beauty-dive-progress'", 'conversation.input.dock', 'useProjection', 'MODEL', 'DiveProgress']],
+  ['lib/client.js', ['__ModuleLoader__.load', "id: 'dsh-ikun-pet'", 'conversation.input.dock', 'useProjection', 'MODEL', 'DiveProgress']],
 ]) {
   const p = join(root, name)
   ok(existsSync(p), `${name} 存在`)
@@ -70,12 +70,12 @@ for (const [name, mustContain] of [
 }
 
 // 4. 安装载荷与文档
-for (const p of ['beauty.package.json', 'cordis.patch.yml', 'README.md', 'demo/index.html', 'docs/PROGRESS-STAGES.md']) {
+for (const p of ['ikun.package.json', 'cordis.patch.yml', 'README.md', 'demo/index.html', 'docs/PROGRESS-STAGES.md']) {
   ok(existsSync(join(root, p)), `${p} 存在`)
 }
 if (existsSync(join(root, 'cordis.patch.yml'))) {
   const src = readFileSync(join(root, 'cordis.patch.yml'), 'utf-8')
-  ok(src.includes('id: beauty-dive-progress'), 'cordis.patch.yml 包含插件行')
+  ok(src.includes('id: dsh-ikun-pet'), 'cordis.patch.yml 包含插件行')
   ok(src.includes('# disabled: true'), 'cordis.patch.yml 包含注释形式的停用开关')
 }
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// beauty-dive-progress · 深潜进度桌宠（Client 半）
+// dsh-ikun-pet · ikun 桌宠（Client 半）
 // 用于 DSH 的 cordis_define 工具：code.client 字段
 //
 // 职责：
@@ -10,7 +10,7 @@
 //      会话历史时长自校准 + 工具/流式/等待活动调速 + 收缩保留量）
 //   3. 每 20% 切换一档：动图动作与气泡文案同时变化（0/20/40/60/80/100）
 //   4. 深潜完成后播放庆祝动画（100% + 「完成啦！你干嘛~哎哟」）再退场，
-//      并通过 beauty-dive-voice RPC 让宿主进程系统级播放完成提示音
+//      并通过 ikun-pet-voice RPC 让宿主进程系统级播放完成提示音
 // =============================================================================
 
 return {
@@ -20,7 +20,7 @@ return {
     if (slots === undefined) return
 
     styles.insert(`
-.beauty-dive {
+.ikun-pet {
   position: relative;
   box-sizing: border-box;
   width: 100%;
@@ -28,20 +28,20 @@ return {
   border: 1px solid var(--dsw-alias-border-l1);
   border-radius: 12px;
   background: var(--dsw-alias-bg-layer-1);
-  animation: beauty-dive-in 0.18s ease-out;
+  animation: ikun-pet-in 0.18s ease-out;
 }
-@keyframes beauty-dive-in {
+@keyframes ikun-pet-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: none; }
 }
-.beauty-dive-meta {
+.ikun-pet-meta {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 10px;
   margin-bottom: 2px;
 }
-.beauty-dive-text {
+.ikun-pet-text {
   font-size: 12px;
   line-height: 18px;
   color: var(--dsw-alias-label-secondary);
@@ -49,7 +49,7 @@ return {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.beauty-dive-pct {
+.ikun-pet-pct {
   flex: none;
   font-size: 12px;
   line-height: 18px;
@@ -57,18 +57,18 @@ return {
   color: var(--dsw-alias-brand-primary);
   font-variant-numeric: tabular-nums;
 }
-.beauty-dive-stage {
+.ikun-pet-stage {
   position: relative;
   height: 58px;
 }
-.beauty-dive-pet {
+.ikun-pet-pet {
   position: absolute;
   bottom: 0;
   transform: translateX(-50%);
   pointer-events: none;
   z-index: 2;
 }
-.beauty-dive-sprite {
+.ikun-pet-sprite {
   position: absolute;
   left: 0;
   top: 0;
@@ -77,7 +77,7 @@ return {
   background-repeat: no-repeat;
   image-rendering: pixelated;
 }
-.beauty-dive-emoji {
+.ikun-pet-emoji {
   position: absolute;
   left: 0;
   top: 0;
@@ -88,14 +88,14 @@ return {
   justify-content: center;
   font-size: 30px;
 }
-.beauty-dive-track {
+.ikun-pet-track {
   position: relative;
   height: 8px;
   border-radius: 6px;
   background: var(--dsw-alias-bg-layer-2);
   overflow: hidden;
 }
-.beauty-dive-fill {
+.ikun-pet-fill {
   position: absolute;
   left: 0;
   top: 0;
@@ -104,7 +104,7 @@ return {
   background: var(--dsw-alias-brand-primary);
   transition: width 150ms linear;
 }
-.beauty-dive-fill::after {
+.ikun-pet-fill::after {
   content: '';
   position: absolute;
   left: 0;
@@ -114,18 +114,18 @@ return {
   border-radius: 6px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   background-size: 200% 100%;
-  animation: beauty-dive-sheen 1.6s linear infinite;
+  animation: ikun-pet-sheen 1.6s linear infinite;
 }
-.beauty-dive-fill-done {
+.ikun-pet-fill-done {
   background: var(--dsw-alias-state-success-primary);
 }
-@keyframes beauty-dive-sheen {
+@keyframes ikun-pet-sheen {
   from { background-position: 200% 0; }
   to   { background-position: -200% 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .beauty-dive { animation: none; }
-  .beauty-dive-fill::after { animation: none; }
+  .ikun-pet { animation: none; }
+  .ikun-pet-fill::after { animation: none; }
 }
 `)
 
@@ -247,7 +247,7 @@ return {
       // ---- 素材地址：Host 通过 webServer 提供本地 WebP ----
       React.useEffect(() => {
         let alive = true
-        host.call('beauty-dive-state').then((s) => {
+        host.call('ikun-pet-state').then((s) => {
           if (alive && s !== null && typeof s.spriteUrl === 'string') setSpriteUrl(s.spriteUrl)
         }).catch(() => { /* 素材失败时使用 🐤 占位 */ })
         return () => { alive = false }
@@ -272,7 +272,7 @@ return {
           setProgress(100)
           setPhase('done')
           // 完成：宿主进程系统级播放「你干嘛~哎哟」（与浏览器静音无关）
-          host.call('beauty-dive-voice').catch(() => { /* 播放失败静默，宿主端已记录 */ })
+          host.call('ikun-pet-voice').catch(() => { /* 播放失败静默，宿主端已记录 */ })
           const stop = ctx.timeout(() => {
             setProgress(0)
             setPhase('idle')
@@ -330,7 +330,7 @@ return {
         if (phase !== 'diving' || sessionId === null) return
         let alive = true
         const poll = () => {
-          host.call('beauty-dive-goal', { sessionId }).then((r) => {
+          host.call('ikun-pet-goal', { sessionId }).then((r) => {
             if (!alive || r === null || r.goal === null) return
             const g = r.goal
             if (typeof g.roundsStarted !== 'number' || typeof g.maxGoalRounds !== 'number' || g.maxGoalRounds <= 0) return
@@ -390,31 +390,31 @@ return {
       // 宠物中心沿面板 3% → 97% 行走，始终压在进度条上方
       const petLeft = (3 + progress * 0.94) + '%'
 
-      return React.createElement('div', { className: 'beauty-dive', 'aria-hidden': 'true' },
-        React.createElement('div', { className: 'beauty-dive-meta' },
-          React.createElement('span', { className: 'beauty-dive-text', title: text }, text),
-          React.createElement('span', { className: 'beauty-dive-pct' }, pct + '%'),
+      return React.createElement('div', { className: 'ikun-pet', 'aria-hidden': 'true' },
+        React.createElement('div', { className: 'ikun-pet-meta' },
+          React.createElement('span', { className: 'ikun-pet-text', title: text }, text),
+          React.createElement('span', { className: 'ikun-pet-pct' }, pct + '%'),
         ),
-        React.createElement('div', { className: 'beauty-dive-stage' },
+        React.createElement('div', { className: 'ikun-pet-stage' },
           React.createElement('div', {
-            className: 'beauty-dive-pet',
+            className: 'ikun-pet-pet',
             style: { left: petLeft, width: W + 'px', height: H + 'px' },
           },
             spriteUrl !== null
               ? React.createElement('div', {
-                  className: 'beauty-dive-sprite',
+                  className: 'ikun-pet-sprite',
                   style: {
                     backgroundImage: 'url("' + spriteUrl + '")',
                     backgroundSize: (W * 8) + 'px ' + (H * 9) + 'px',
                     backgroundPosition: bgX + 'px ' + bgY + 'px',
                   },
                 })
-              : React.createElement('div', { className: 'beauty-dive-emoji' }, '🐤'),
+              : React.createElement('div', { className: 'ikun-pet-emoji' }, '🐤'),
           ),
         ),
-        React.createElement('div', { className: 'beauty-dive-track' },
+        React.createElement('div', { className: 'ikun-pet-track' },
           React.createElement('div', {
-            className: 'beauty-dive-fill' + (phase === 'done' ? ' beauty-dive-fill-done' : ''),
+            className: 'ikun-pet-fill' + (phase === 'done' ? ' ikun-pet-fill-done' : ''),
             style: { width: progress + '%' },
           }),
         ),
@@ -423,7 +423,7 @@ return {
 
     // ---- 注册到「Deep diving...」正下方的整行区块 ----
     slots.inject('conversation.input.dock', () => slots.register(
-      { name: 'conversation.input.dock', id: 'beauty-dive-progress', order: 50, label: '深潜进度 · beauty-dive-progress' },
+      { name: 'conversation.input.dock', id: 'dsh-ikun-pet', order: 50, label: 'ikun 桌宠 · dsh-ikun-pet' },
       (props) => React.createElement(DiveProgress, props),
     ))
   },

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.2.0（2025-08-16）
+
+- 项目更名：`beauty-dive-progress` → `dsh-ikun-pet`，显示名「深潜进度桌宠」→「ikun 桌宠」
+  - 仓库地址、包名、插件 id、素材路由、RPC（`ikun-pet-state/voice/goal`）、调试工具（`ikun_pet_debug`）、
+    样式类（`.ikun-pet-*`）与文档一并更新；`beauty.package.json` → `ikun.package.json`
+
 ## 2.1.0（2025-08-15）
 
 - 声明 `dsh.bundle`（`package.json` + 包内 `cordis.patch.yml`）：
@@ -8,7 +14,7 @@
   profile 的 cordis.patch.yml**
 - 停用开关（注释形式的 `disabled: true`）随包内补丁分发；用户补丁层
   也支持按 id 覆盖（停用/改配置）
-- 卸载简化为 `dsh plugin remove dsh-beauty-dive-progress`（bundles 层自动对账）
+- 卸载简化为 `dsh plugin remove dsh-ikun-pet`（bundles 层自动对账）
 - 文档：新增「关闭 / 调整完成音效」章节（用户补丁层覆盖或改包内补丁两种方式）
 - 文档：安装章节新增「方式 B：远程一条命令」（`dsh plugin add github:...`），与克隆安装并存
 
@@ -24,7 +30,7 @@
 ## 1.2.0（2025-08-15）
 
 - 进度策略升级为**通用自适应模型**（替换固定时间常数曲线）：
-  - 真实信号：goal 模式按 `已进行回合数 / 目标回合上限` 贡献真实进度（新增 `beauty-dive-goal` RPC）
+  - 真实信号：goal 模式按 `已进行回合数 / 目标回合上限` 贡献真实进度（新增 `ikun-pet-goal` RPC）
   - 自适应预期：取本会话最近 8 个回合时长的中位数自校准，短任务快跑、长任务慢跑
   - 活动调速：工具执行 ×1.8、流式输出 ×1.2、等待用户审批/回答 ×0.05
   - 收缩保留量：封顶 88% 起、越跑越久越接近 98%，永不假 100%
@@ -40,14 +46,14 @@
 - 新增完成提示音：深潜完成（100%）时由宿主进程系统级播放 `assets/voice.mp3`
   （「你干嘛~哎哟」，默认 macOS `afplay`，可用 `CONFIG.playVoiceAtDone` /
   `playCommand` 配置开关与播放器）
-- `beauty_dive_debug` 增加语音状态字段（voiceExists / playCount / lastPlayError）
+- `ikun_pet_debug` 增加语音状态字段（voiceExists / playCount / lastPlayError）
 - demo 页完成按钮同步播放提示音
 
 ## 1.0.0（2025-08-15）
 
-- 首次发布：DSH 深潜进度桌宠
+- 首次发布：DSH ikun 桌宠
   - 注册 `conversation.input.dock`，仅在 Deep diving（会话 running）期间渲染
   - 坤宠动图沿进度条行走，0% → 100%，每 20% 切换动作与文案
   - 完成时跳跃庆祝「完成啦！你干嘛~哎哟」，1.8s 后退场
-  - Host 通过 `webServer` 提供本地精灵图；`beauty_dive_debug` 调试工具
+  - Host 通过 `webServer` 提供本地精灵图；`ikun_pet_debug` 调试工具
   - 独立 demo 页与构建/校验脚本

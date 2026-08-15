@@ -1,4 +1,4 @@
-# beauty-dive-progress · 深潜进度桌宠 · 精灵图契约
+# dsh-ikun-pet · ikun 桌宠 · 精灵图契约
 
 本插件的动画素材（`assets/spritesheet.webp`）采用固定的 **8 列 × 9 行图集契约**：
 全部动画通过 CSS `background-position` 按行列取帧播放。

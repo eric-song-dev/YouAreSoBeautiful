@@ -1,7 +1,7 @@
 {
-  "name": "dsh-beauty-dive-progress",
+  "name": "dsh-ikun-pet",
   "version": "2.1.0",
-  "description": "beauty-dive-progress · 深潜进度桌宠 —— DeepSeek Harness 永久插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案，完成时系统级播放提示音",
+  "description": "dsh-ikun-pet · ikun 桌宠 —— DeepSeek Harness 永久插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案，完成时系统级播放提示音",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -17,12 +17,12 @@
   "author": "eric-song-dev <eric.song.life@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eric-song-dev/beauty-dive-progress.git"
+    "url": "git+https://github.com/eric-song-dev/dsh-ikun-pet.git"
   },
   "bugs": {
-    "url": "https://github.com/eric-song-dev/beauty-dive-progress/issues"
+    "url": "https://github.com/eric-song-dev/dsh-ikun-pet/issues"
   },
-  "homepage": "https://github.com/eric-song-dev/beauty-dive-progress#readme",
+  "homepage": "https://github.com/eric-song-dev/dsh-ikun-pet#readme",
   "main": "./lib/host.js",
   "exports": {
     ".": {
@@ -52,7 +52,7 @@
     "docs",
     "demo",
     "scripts",
-    "beauty.package.json"
+    "ikun.package.json"
   ],
   "scripts": {
     "build": "node scripts/build-package.mjs",

@@ -1,12 +1,12 @@
 // =============================================================================
-// beauty-dive-progress · 深潜进度桌宠（Host 半）
+// dsh-ikun-pet · ikun 桌宠（Host 半）
 // 用于 DSH 的 cordis_define 工具：code.host 字段
 //
 // 职责：
 //   1. 读取本地素材（坤宠精灵图），通过 webServer 注册 HTTP 路由给浏览器加载
-//   2. 提供 beauty-dive-state RPC：返回精灵图 URL（客户端挂载时拉取一次）
+//   2. 提供 ikun-pet-state RPC：返回精灵图 URL（客户端挂载时拉取一次）
 //   3. 深潜完成（100%）时由宿主进程用系统命令播放「你干嘛~哎哟」提示音
-//   4. 提供 beauty_dive_debug 调试工具：查看素材加载、路由与播放状态
+//   4. 提供 ikun_pet_debug 调试工具：查看素材加载、路由与播放状态
 //
 // 安装：见 README.md「安装」章节
 // =============================================================================
@@ -14,11 +14,11 @@
 // ===== 配置区（按需修改） =====
 const CONFIG = {
   // 精灵图路径（8 列 × 9 行、每格 192×208 的 WebP，见 docs/SPRITESHEET-CONTRACT.md）
-  spritePath: '/Users/ericsong/test/project/dsh/beauty-dive-progress/assets/spritesheet.webp',
+  spritePath: '/Users/ericsong/test/project/dsh/dsh-ikun-pet/assets/spritesheet.webp',
   // 素材路由路径（webServer 的 HTTP pathname，需全局唯一、勿与其它插件冲突）
-  routePath: '/beauty-dive/spritesheet.webp',
+  routePath: '/ikun-pet/spritesheet.webp',
   // 完成提示音路径（mp3）
-  voicePath: '/Users/ericsong/test/project/dsh/beauty-dive-progress/assets/voice.mp3',
+  voicePath: '/Users/ericsong/test/project/dsh/dsh-ikun-pet/assets/voice.mp3',
   // 是否在深潜完成（100%）时播放提示音
   playVoiceAtDone: true,
   // 宿主进程系统级播放命令（macOS 用 afplay；Windows 可用 powershell -c (New-Object Media.SoundPlayer '...').PlaySync()；Linux 可用 ffplay -nodisp -autoexit）
@@ -30,7 +30,7 @@ return {
     const fs = ctx.get('fs')
     const webServer = ctx.get('webServer')
     if (fs === undefined || webServer === undefined) {
-      console.error('[beauty-dive] fs or webServer service is unavailable')
+      console.error('[ikun-pet] fs or webServer service is unavailable')
       return
     }
 
@@ -48,19 +48,19 @@ return {
       try {
         const target = await fs.resolve(CONFIG.spritePath)
         spriteBytes = await fs.readBytes(target, undefined, 16 * 1024 * 1024)
-        console.log('[beauty-dive] spritesheet loaded:', spriteBytes.length, 'bytes')
+        console.log('[ikun-pet] spritesheet loaded:', spriteBytes.length, 'bytes')
       } catch (err) {
-        console.error('[beauty-dive] failed to load spritesheet:', err)
+        console.error('[ikun-pet] failed to load spritesheet:', err)
       }
       try {
         const target = await fs.resolve(CONFIG.voicePath)
         const info = await fs.stat(target)
         voiceExists = info !== undefined
-        if (voiceExists) console.log('[beauty-dive] voice ready:', CONFIG.voicePath)
-        else console.warn('[beauty-dive] voice file not found:', CONFIG.voicePath)
+        if (voiceExists) console.log('[ikun-pet] voice ready:', CONFIG.voicePath)
+        else console.warn('[ikun-pet] voice file not found:', CONFIG.voicePath)
       } catch (err) {
         voiceExists = false
-        console.error('[beauty-dive] failed to stat voice:', err)
+        console.error('[ikun-pet] failed to stat voice:', err)
       }
       if (disposed || spriteBytes === null) return
 
@@ -81,7 +81,7 @@ return {
         const host = webServer.host === '0.0.0.0' ? '127.0.0.1' : webServer.host
         spriteUrl = 'http://' + host + ':' + webServer.port + CONFIG.routePath
       } catch (err) {
-        console.error('[beauty-dive] failed to build sprite URL:', err)
+        console.error('[ikun-pet] failed to build sprite URL:', err)
       }
     }
     const assetsReady = loadAssets()
@@ -107,30 +107,30 @@ return {
         lastPlayError = null
         shell.run(spec).catch((err) => {
           lastPlayError = String(err && err.message ? err.message : err)
-          console.error('[beauty-dive] voice playback failed:', err)
+          console.error('[ikun-pet] voice playback failed:', err)
         })
         return { played: true }
       } catch (err) {
         lastPlayError = String(err && err.message ? err.message : err)
-        console.error('[beauty-dive] failed to start voice playback:', err)
+        console.error('[ikun-pet] failed to start voice playback:', err)
         return { played: false, reason: lastPlayError }
       }
     }
 
     // ---------- client RPC：返回素材地址 ----------
-    harness.handle('beauty-dive-state', async () => {
+    harness.handle('ikun-pet-state', async () => {
       await assetsReady
       return { spriteUrl }
     })
 
     // ---------- client RPC：深潜完成（100%）时触发提示音 ----------
-    harness.handle('beauty-dive-voice', async () => {
+    harness.handle('ikun-pet-voice', async () => {
       await assetsReady
       return playVoice()
     })
 
     // ---------- client RPC：查询会话目标回合进度（真实信号，goal 模式开启时可用） ----------
-    harness.handle('beauty-dive-goal', async (args) => {
+    harness.handle('ikun-pet-goal', async (args) => {
       const agents = ctx.get('agents')
       const goals = ctx.get('goals')
       if (agents === undefined || goals === undefined) return { goal: null }
@@ -154,8 +154,8 @@ return {
 
     // ---------- 调试工具 ----------
     harness.registerTool(ctx, harness.defineTool({
-      name: 'beauty_dive_debug',
-      description: 'Read the You-Are-So-Beautiful deep-dive progress plugin state: asset loading, HTTP route and sprite URL. Use only to diagnose the deep-dive progress pet.',
+      name: 'ikun_pet_debug',
+      description: 'Read the dsh-ikun-pet deep-dive progress plugin state: asset loading, HTTP route and sprite URL. Use only to diagnose the deep-dive progress pet.',
       parameters: {},
       output: {
         schema: { type: 'json' },

@@ -1,8 +1,8 @@
-# 🐤 beauty-dive-progress · 深潜进度桌宠
+# 🐤 dsh-ikun-pet · ikun 桌宠
 
-[![DSH Plugin](https://img.shields.io/badge/DSH-plugin-4d6bfe?style=flat-square&logo=deepseek)](https://github.com/eric-song-dev/beauty-dive-progress)
-[![License](https://img.shields.io/github/license/eric-song-dev/beauty-dive-progress?style=flat-square)](./LICENSE)
-[![Stars](https://img.shields.io/github/stars/eric-song-dev/beauty-dive-progress?style=flat-square&logo=github)](https://github.com/eric-song-dev/beauty-dive-progress/stargazers)
+[![DSH Plugin](https://img.shields.io/badge/DSH-plugin-4d6bfe?style=flat-square&logo=deepseek)](https://github.com/eric-song-dev/dsh-ikun-pet)
+[![License](https://img.shields.io/github/license/eric-song-dev/dsh-ikun-pet?style=flat-square)](./LICENSE)
+[![Stars](https://img.shields.io/github/stars/eric-song-dev/dsh-ikun-pet?style=flat-square&logo=github)](https://github.com/eric-song-dev/dsh-ikun-pet/stargazers)
 
 > DeepSeek Harness（DSH）插件 —— 只在 DSH **每次回答问题的 Deep diving 期间**，
 > 用坤宠动图**填满「Deep diving...」状态行下方的整行区块**：
@@ -41,7 +41,7 @@
 ## 🗂 项目结构
 
 ```
-beauty-dive-progress/
+dsh-ikun-pet/
 ├── lib/
 │   ├── host.js            # 永久插件 Host 半：素材路由 + agents 轮询播放提示音
 │   └── client.js          # 永久插件 Client 半：client bundle（深潜区块 UI + 进度动画）
@@ -59,7 +59,7 @@ beauty-dive-progress/
 ├── scripts/
 │   ├── build-package.mjs  # 生成动态插件一键安装载荷
 │   └── validate.mjs       # 仓库完整性校验
-├── beauty.package.json    # 动态插件安装载荷
+├── ikun.package.json    # 动态插件安装载荷
 ├── cordis.patch.yml       # bundle 自带组成补丁（dsh plugin add 自动应用；含停用开关）
 ├── package.json           # 插件包清单（main / exports / dsh.client / dsh.bundle）
 └── README.md
@@ -78,7 +78,7 @@ beauty-dive-progress/
 
 ```bash
 # 第 1 步：获取本包
-git clone <本仓库地址> && cd beauty-dive-progress
+git clone <本仓库地址> && cd dsh-ikun-pet
 
 # 第 2 步：一条命令安装并自动注册
 dsh plugin add "$PWD"
@@ -90,11 +90,11 @@ dsh plugin add "$PWD"
 ### 方式 B：远程一条命令（适合纯使用者）
 
 ```bash
-dsh plugin add github:<你的用户名>/beauty-dive-progress
+dsh plugin add github:<你的用户名>/dsh-ikun-pet
 # 或 HTTPS 地址：
-# dsh plugin add https://github.com/<你的用户名>/beauty-dive-progress.git
+# dsh plugin add https://github.com/<你的用户名>/dsh-ikun-pet.git
 # 若已发布到 npm：
-# dsh plugin add dsh-beauty-dive-progress
+# dsh plugin add dsh-ikun-pet
 ```
 
 要求：本机已安装 git（私有仓库需先配好 SSH 访问）。远程安装的包在
@@ -116,16 +116,16 @@ dsh web
 
 ```bash
 # 素材路由（应为 image/webp）
-curl -sI http://127.0.0.1:3080/beauty-dive/spritesheet.webp
+curl -sI http://127.0.0.1:3080/ikun-pet/spritesheet.webp
 # 客户端 bundle 路由（应返回 JS 源码）
-curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
+curl -s http://127.0.0.1:3080/plugins/dsh-ikun-pet/client.js
 ```
 
 之后每次 DSH 回答问题的 Deep diving 期间，「Deep diving...」下方区块即出现坤宠进度条，
 完成时播放「你干嘛~哎哟」。
 
 > 手动安装方式：编辑 `$DSH_HOME/profiles/web/package.json` 的 `dependencies`
-> 加入 `"dsh-beauty-dive-progress": "file:<仓库绝对路径>"`，在 profile 目录
+> 加入 `"dsh-ikun-pet": "file:<仓库绝对路径>"`，在 profile 目录
 > `pnpm install`，然后把包名追加进 `dsh.profile.bundles`——与 `dsh plugin add`
 > 完全等价，仅是手写。
 
@@ -135,8 +135,8 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
 
 ```yaml
 - insert:
-    - id: beauty-dive-progress
-      name: dsh-beauty-dive-progress
+    - id: dsh-ikun-pet
+      name: dsh-ikun-pet
       # ── 停用本插件：去掉下面这行前面的 "#" 注释 ──
       # ── 重新启用：再把 "#" 加回行首 ──
       # disabled: true
@@ -152,7 +152,7 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
 `config` 覆盖可以放在同一条目里：
 
 ```yaml
-- id: beauty-dive-progress
+- id: dsh-ikun-pet
   # 停用整个插件：去掉下面这行前面的 "#" 注释（config 可以同时保留）
   # disabled: true
   config:
@@ -168,7 +168,7 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
 
 ```yaml
 # 关闭任务完成时的提示音（动图进度条不受影响）；恢复音效：删除本段后重启
-- id: beauty-dive-progress
+- id: dsh-ikun-pet
   config:
     playVoiceAtDone: false
 ```
@@ -186,7 +186,7 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
 ## 🗑 卸载（uninstall）
 
 ```bash
-dsh plugin remove dsh-beauty-dive-progress
+dsh plugin remove dsh-ikun-pet
 # 重启 dsh web
 ```
 
@@ -206,7 +206,7 @@ dsh plugin add <仓库目录>   # 重新链接；若新版本新增/删除了 ds
 不写组成、只在**当前会话**生效（进程重启后需重新安装）。适合试用：
 
 1. 修改 `src/host.js` 顶部 `CONFIG` 的素材绝对路径（或保持默认）
-2. `node scripts/build-package.mjs` 生成 `beauty.package.json`
+2. `node scripts/build-package.mjs` 生成 `ikun.package.json`
 3. 把载荷交给 DSH 会话里的 Agent 用 `cordis_define` + `cordis_run` 安装，或手动调用
 4. 移除：`cordis_undefine`（或让会话结束自动消失）
 
@@ -250,7 +250,7 @@ npm run demo                     # 或 npx serve . 打开 demo/index.html 离线
 
 | 现象 | 排查 |
 | --- | --- |
-| 重启后 DSH 报插件行激活失败 | 确认第 2 步依赖已安装：profile 目录下 `node -e "require('dsh-beauty-dive-progress')"` 应成功 |
+| 重启后 DSH 报插件行激活失败 | 确认第 2 步依赖已安装：profile 目录下 `node -e "require('dsh-ikun-pet')"` 应成功 |
 | 区块不显示但路由正常 | 浏览器强刷（Cmd+Shift+R）；确认没有同时启用动态插件 |
 | 提示音不响 | 检查 `config.playVoiceAtDone`；macOS 用 `afplay`，其它系统按注释换 `playCommand` |
 | 想让插件不加载 | 插件行加 `disabled: true` 后重启（见「启用/停用」） |
