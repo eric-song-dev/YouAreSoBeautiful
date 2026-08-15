@@ -1,5 +1,9 @@
 # 🐤 beauty-dive-progress · 深潜进度桌宠
 
+[![DSH Plugin](https://img.shields.io/badge/DSH-plugin-4d6bfe?style=flat-square&logo=deepseek)](https://github.com/eric-song-dev/beauty-dive-progress)
+[![License](https://img.shields.io/github/license/eric-song-dev/beauty-dive-progress?style=flat-square)](./LICENSE)
+[![Stars](https://img.shields.io/github/stars/eric-song-dev/beauty-dive-progress?style=flat-square&logo=github)](https://github.com/eric-song-dev/beauty-dive-progress/stargazers)
+
 > DeepSeek Harness（DSH）插件 —— 只在 DSH **每次回答问题的 Deep diving 期间**，
 > 用坤宠动图**填满「Deep diving...」状态行下方的整行区块**：
 > 进度条 `0% → 100%`，**每 20% 切换一档动图动作与文案**，完成时跳跃庆祝「完成啦！你干嘛~哎哟」🏀
