@@ -1,6 +1,6 @@
 {
   "name": "dsh-beauty-dive-progress",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "You Are So Beautiful · 深潜进度桌宠 —— DeepSeek Harness 永久插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案，完成时系统级播放提示音",
   "keywords": [
@@ -24,6 +24,9 @@
     "./package.json": "./package.json"
   },
   "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "platform": "web",
       "inject": [
@@ -32,6 +35,7 @@
     }
   },
   "files": [
+    "cordis.patch.yml",
     "lib",
     "src",
     "assets",

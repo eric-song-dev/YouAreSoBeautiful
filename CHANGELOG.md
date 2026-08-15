@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.1.0（2025-08-15）
+
+- 声明 `dsh.bundle`（`package.json` + 包内 `cordis.patch.yml`）：
+  安装简化为 `dsh plugin add <仓库路径>` 一条命令——自动安装依赖并把包
+  加入 `dsh.profile.bundles` 层列表，组成行随包自动应用，**无需再手动编辑
+  profile 的 cordis.patch.yml**
+- 停用开关（注释形式的 `disabled: true`）随包内补丁分发；用户补丁层
+  也支持按 id 覆盖（停用/改配置）
+- 卸载简化为 `dsh plugin remove dsh-beauty-dive-progress`（bundles 层自动对账）
+- 文档：新增「关闭 / 调整完成音效」章节（用户补丁层覆盖或改包内补丁两种方式）
+
 ## 2.0.0（2025-08-15）
 
 - 升级为**永久插件**：可写入 DSH 组成（`cordis.patch.yml`），随 DSH 启动自动加载，无需每次会话重新激活

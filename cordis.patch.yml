@@ -1,0 +1,17 @@
+# You Are So Beautiful · 深潜进度桌宠（bundle 自带补丁层）
+# 本文件随包分发：dsh plugin add 安装本包后，DSH 会自动把它加入
+# profile 的 dsh.profile.bundles，启动时自动应用本层（无需手动编辑
+# $DSH_HOME/profiles/web/cordis.patch.yml）。
+
+- insert:
+    - id: beauty-dive-progress
+      name: dsh-beauty-dive-progress
+      # ── 停用本插件：去掉下面这行前面的 "#" 注释（改完重启 dsh web）──
+      # ── 重新启用：再把 "#" 加回行首 ──
+      # disabled: true
+      config:
+        playVoiceAtDone: true
+        # 素材默认取包内 assets/；如需自定义：
+        # spritePath: /绝对路径/spritesheet.webp
+        # voicePath: /绝对路径/voice.mp3
+        # playCommand: (p) => "ffplay -nodisp -autoexit '" + p + "'"

@@ -70,8 +70,13 @@ for (const [name, mustContain] of [
 }
 
 // 4. 安装载荷与文档
-for (const p of ['beauty.package.json', 'README.md', 'demo/index.html', 'docs/PROGRESS-STAGES.md']) {
+for (const p of ['beauty.package.json', 'cordis.patch.yml', 'README.md', 'demo/index.html', 'docs/PROGRESS-STAGES.md']) {
   ok(existsSync(join(root, p)), `${p} 存在`)
+}
+if (existsSync(join(root, 'cordis.patch.yml'))) {
+  const src = readFileSync(join(root, 'cordis.patch.yml'), 'utf-8')
+  ok(src.includes('id: beauty-dive-progress'), 'cordis.patch.yml 包含插件行')
+  ok(src.includes('# disabled: true'), 'cordis.patch.yml 包含注释形式的停用开关')
 }
 
 console.log(failed === 0 ? '\n✅ 校验通过' : `\n❌ ${failed} 项校验失败`)

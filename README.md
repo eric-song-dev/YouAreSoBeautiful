@@ -56,7 +56,8 @@ YouAreSoBeautiful/
 │   ├── build-package.mjs  # 生成动态插件一键安装载荷
 │   └── validate.mjs       # 仓库完整性校验
 ├── beauty.package.json    # 动态插件安装载荷
-├── package.json           # 插件包清单（main / exports / dsh.client）
+├── cordis.patch.yml       # bundle 自带组成补丁（dsh plugin add 自动应用；含停用开关）
+├── package.json           # 插件包清单（main / exports / dsh.client / dsh.bundle）
 └── README.md
 ```
 
@@ -64,57 +65,34 @@ YouAreSoBeautiful/
 
 永久插件写入 DSH 的 profile 组成，**随 DSH 启动自动加载**，所有会话生效。
 
+本包声明了 `dsh.bundle`（自带组成补丁层），因此 **`dsh plugin add` 一条命令
+会自动完成安装 + 组成注册**，无需手动编辑任何配置文件。
+
 ### 第 1 步：获取本包
 
 ```bash
 git clone <本仓库地址> && cd YouAreSoBeautiful
 ```
 
-### 第 2 步：把包安装进你的 profile
-
-DSH 官方命令 `dsh plugin` 会把参数转发给 profile 目录下的 pnpm：
+### 第 2 步：一条命令安装并自动注册
 
 ```bash
 dsh plugin add <本仓库绝对路径>
 # 例：dsh plugin add /Users/you/YouAreSoBeautiful
 ```
 
-或手动操作（与上面等价）：编辑 `$DSH_HOME/profiles/web/package.json`，在
-`dependencies` 里加入：
+该命令会：① 把本包安装进 profile 依赖；② 检测到包声明了 `dsh.bundle`，
+**自动把包名加入 `dsh.profile.bundles` 层列表**——启动时 DS H会自动应用
+包内 `cordis.patch.yml` 里的插件行，这一步就是旧版教程里"手动插入插件行"的自动化。
 
-```json
-{ "dependencies": { "dsh-beauty-dive-progress": "file:/Users/you/YouAreSoBeautiful" } }
-```
-
-然后在 profile 目录执行 `pnpm install`。
-
-### 第 3 步：在组成里插入插件行
-
-编辑 `$DSH_HOME/profiles/web/cordis.patch.yml`，在数组里插入：
-
-```yaml
-- insert:
-    - id: beauty-dive-progress
-      name: dsh-beauty-dive-progress
-      config:
-        playVoiceAtDone: true
-        # 素材默认取包内 assets/，一般无需配置；如需自定义：
-        # spritePath: /绝对路径/spritesheet.webp
-        # voicePath: /绝对路径/voice.mp3
-        # playCommand: (p) => "ffplay -nodisp -autoexit '" + p + "'"
-```
-
-### 第 4 步：重启 DSH
+### 第 3 步：重启 DSH 并验证
 
 ```bash
 # 停止当前 dsh web 进程，再重新启动：
 dsh web
 ```
 
-> 部分部署会热重载 `cordis.patch.yml`，但**新插件的首次加载以重启为准**。
-> 重启后浏览器刷新一次页面。
-
-### 第 5 步：验证
+浏览器刷新一次页面后验证：
 
 ```bash
 # 素材路由（应为 image/webp）
@@ -126,9 +104,14 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
 之后每次 DSH 回答问题的 Deep diving 期间，「Deep diving...」下方区块即出现坤宠进度条，
 完成时播放「你干嘛~哎哟」。
 
+> 手动安装方式：编辑 `$DSH_HOME/profiles/web/package.json` 的 `dependencies`
+> 加入 `"dsh-beauty-dive-progress": "file:<仓库绝对路径>"`，在 profile 目录
+> `pnpm install`，然后把包名追加进 `dsh.profile.bundles`——与 `dsh plugin add`
+> 完全等价，仅是手写。
+
 ## 🔛 启用 / 停用（enable / disable）
 
-插件行里预置了一行**注释掉的开关**，停用只需去掉注释：
+插件的组成行由**包内 `cordis.patch.yml`** 提供，其中预置了一行注释掉的开关：
 
 ```yaml
 - insert:
@@ -141,27 +124,54 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
         playVoiceAtDone: true
 ```
 
-**停用**：删除 `# disabled: true` 行首的 `#`；**启用**：把 `#` 加回去。
-改完重启 `dsh web` 生效（支持热重载的部署会自动生效，重启最稳妥）。
+**停用**：编辑仓库里的 `cordis.patch.yml`，删除 `# disabled: true` 行首的 `#`；
+**启用**：把 `#` 加回去。改完重启 `dsh web`。
+
+**不想动仓库文件时**：也可以在你的 `$DSH_HOME/profiles/web/cordis.patch.yml`
+（用户补丁层，在 bundle 层之后应用）里加覆盖：
+
+```yaml
+- id: beauty-dive-progress
+  disabled: true          # 停用；删除这行即重新启用
+```
+
 停用后界面区块与提示音都立即消失，不影响 DSH 其它功能。
+
+## 🔇 关闭 / 调整完成音效
+
+**方式 A：用户补丁层覆盖（推荐，不动仓库）**——编辑
+`$DSH_HOME/profiles/web/cordis.patch.yml`，加入：
+
+```yaml
+# 关闭任务完成时的提示音（动图进度条不受影响）；恢复音效：删除本段后重启
+- id: beauty-dive-progress
+  config:
+    playVoiceAtDone: false
+```
+
+**方式 B：直接改仓库**——把包内 `cordis.patch.yml` 插件行 `config` 里的
+`playVoiceAtDone` 改为 `false`（对所有使用者生效）。
+
+同一处 `config` 还能调整：`voicePath`（自定义提示音）、`playCommand`
+（换播放器，Windows/Linux 必改）、`pollMs` / `playCooldownMs`（检测节奏）。
+注意：补丁层对 `config` 是**整体替换**，覆盖时请写全需要的字段。
+改完重启 `dsh web` 生效。
 
 ## 🗑 卸载（uninstall）
 
-1. 从 `cordis.patch.yml` 中删除整个 `insert:` 段（含 `beauty-dive-progress` 行）；
-2. 移除包依赖（二选一）：
+```bash
+dsh plugin remove dsh-beauty-dive-progress
+# 重启 dsh web
+```
 
-   ```bash
-   dsh plugin remove dsh-beauty-dive-progress
-   # 或手动：编辑 $DSH_HOME/profiles/web/package.json 删除该依赖，再 pnpm install
-   ```
-
-3. 重启 `dsh web`。
+`dsh plugin remove` 会移除依赖，并**自动把包名从 `dsh.profile.bundles` 中
+撤下**（bundles 层会与已安装状态自动对账），无需再手动清理组成文件。
 
 ## 🔄 更新（update）
 
 ```bash
 cd <仓库目录> && git pull
-dsh plugin add <仓库目录>   # 重新链接（内容随源码实时生效）
+dsh plugin add <仓库目录>   # 重新链接；若新版本新增/删除了 dsh.bundle 声明会自动对账
 # 重启 dsh web
 ```
 
@@ -191,9 +201,10 @@ dsh plugin add <仓库目录>   # 重新链接（内容随源码实时生效）
 
 ## ⚙️ 配置
 
-**永久插件**：全部配置在 `cordis.patch.yml` 的插件行 `config` 里（见上文），
+**永久插件**：全部配置在**包内 `cordis.patch.yml`** 的插件行 `config` 里（见上文），
 支持 `spritePath` / `voicePath` / `routePath` / `playVoiceAtDone` / `pollMs` /
-`playCooldownMs` / `playCommand`，素材默认取包内 `assets/`。
+`playCooldownMs` / `playCommand`，素材默认取包内 `assets/`；也可在用户补丁层
+（`$DSH_HOME/profiles/web/cordis.patch.yml`）按 id 覆盖这些配置。
 
 **动态插件**：`src/host.js` 顶部 `CONFIG`，以及 `src/client.js` 的 `STAGES`
 （每档文案/动作）与 `MODEL`（自适应进度模型全部参数）。
