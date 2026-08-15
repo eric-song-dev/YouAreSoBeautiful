@@ -54,7 +54,22 @@ for (const [name, mustContain] of [
   }
 }
 
-// 3. 安装载荷与文档
+// 3. 永久插件源码：lib/ 下的 Host 入口与 Client bundle
+for (const [name, mustContain] of [
+  ['lib/host.js', ['module.exports', "inject: ['timer', 'webServer', 'fs']", 'webServer.register', 'playVoice', 'agents']],
+  ['lib/client.js', ['__ModuleLoader__.load', "id: 'dsh-beauty-dive-progress'", 'conversation.input.dock', 'useProjection', 'MODEL', 'DiveProgress']],
+]) {
+  const p = join(root, name)
+  ok(existsSync(p), `${name} 存在`)
+  if (existsSync(p)) {
+    const src = readFileSync(p, 'utf-8')
+    for (const token of mustContain) {
+      ok(src.includes(token), `${name} 包含关键片段 ${token}`)
+    }
+  }
+}
+
+// 4. 安装载荷与文档
 for (const p of ['beauty.package.json', 'README.md', 'demo/index.html', 'docs/PROGRESS-STAGES.md']) {
   ok(existsSync(join(root, p)), `${p} 存在`)
 }

@@ -1,8 +1,8 @@
 {
   "name": "dsh-beauty-dive-progress",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "You Are So Beautiful · 深潜进度桌宠 —— DeepSeek Harness 插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案",
+  "description": "You Are So Beautiful · 深潜进度桌宠 —— DeepSeek Harness 永久插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案，完成时系统级播放提示音",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -13,7 +13,26 @@
     "桌宠"
   ],
   "license": "MIT",
+  "main": "./lib/host.js",
+  "exports": {
+    ".": {
+      "default": "./lib/host.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
   "files": [
+    "lib",
     "src",
     "assets",
     "docs",

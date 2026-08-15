@@ -15,10 +15,8 @@
   短任务快跑、长任务慢跑，等待你审批时诚实减速，永不假 100%（详见 [docs/PROGRESS-STAGES.md](docs/PROGRESS-STAGES.md)）
 - **完成全机可闻**：100% 完成时由宿主进程用系统命令播放「你干嘛~哎哟」（`assets/voice.mp3`），
   任何窗口、任何会话完成都听得到，与浏览器静音无关（已在 macOS 实测）
-- **零轮询**：直接消费 DSH 插槽自带的 `useSession` 快照读取 `running` 与回合开始时间，
-  Host 只负责把本地精灵图通过 `webServer` 提供给浏览器
-- **主题自适应**：全部颜色使用 DSH 主题变量（`--dsw-alias-*`），深浅色模式自动适配
-- **内置调试工具**：`beauty_dive_debug` 可查看素材加载、HTTP 路由与精灵图 URL
+- **永久插件形态**：写入 DSH 组成（`cordis.patch.yml`），随 DSH 启动自动加载，一次安装全局生效；
+  同时保留动态插件源码（`src/`）作为会话级安装的替代方式
 
 ## 🖥 平台支持与已知限制
 
@@ -31,74 +29,152 @@
   如在两个平台上遇到问题，欢迎提 issue / 反馈。
 - 界面部分基于 DSH Web 界面与标准浏览器能力实现，理论上跨平台一致。
 - 提示音部分依赖宿主进程的系统播放命令，与操作系统强相关：
-  - Windows：需在 `src/host.js` 的 `CONFIG.playCommand` 换成 PowerShell 方案
-    （代码注释已给出示例），**未经实测**；
+  - Windows：需在组成行 `config.playCommand` 换成 PowerShell 方案（代码注释已给出示例），**未经实测**；
   - Linux：可用 `ffplay -nodisp -autoexit`（需先安装 ffmpeg），**未经实测**。
-- 若在 Windows/Linux 上提示音无法播放：可把 `CONFIG.playVoiceAtDone` 设为 `false`
+- 若在 Windows/Linux 上提示音无法播放：可把 `config.playVoiceAtDone` 设为 `false`
   关闭音效（不影响动图进度条），或自行验证并替换 `playCommand`。
 
 ## 🗂 项目结构
 
 ```
 YouAreSoBeautiful/
+├── lib/
+│   ├── host.js            # 永久插件 Host 半：素材路由 + agents 轮询播放提示音
+│   └── client.js          # 永久插件 Client 半：client bundle（深潜区块 UI + 进度动画）
 ├── assets/
 │   ├── spritesheet.webp   # 坤宠精灵图（8 列 × 9 行图集）
 │   └── voice.mp3          # 完成提示音「你干嘛~哎哟」（100% 时由宿主进程系统级播放）
+├── src/
+│   ├── host.js            # 动态插件 Host 半（会话级安装的替代方式）
+│   └── client.js          # 动态插件 Client 半
 ├── demo/
 │   └── index.html         # 无需 DSH 的独立预览：可播放/暂停/拖动进度
 ├── docs/
 │   ├── SPRITESHEET-CONTRACT.md  # 精灵图契约
 │   └── PROGRESS-STAGES.md       # 进度档位与曲线说明
 ├── scripts/
-│   ├── build-package.mjs  # 生成 cordis_define 一键安装载荷
+│   ├── build-package.mjs  # 生成动态插件一键安装载荷
 │   └── validate.mjs       # 仓库完整性校验
-├── src/
-│   ├── host.js            # 插件 Host 半：素材路由 + RPC + 调试工具
-│   └── client.js          # 插件 Client 半：深潜区块 UI + 进度动画
-├── beauty.package.json    # 生成的安装载荷（可直接粘贴给 cordis_define）
-├── package.json
+├── beauty.package.json    # 动态插件安装载荷
+├── package.json           # 插件包清单（main / exports / dsh.client）
 └── README.md
 ```
 
-## 🚀 安装
+## 🚀 安装（永久插件，推荐）
 
-### 方式一：DSH 动态插件（推荐）
+永久插件写入 DSH 的 profile 组成，**随 DSH 启动自动加载**，所有会话生效。
 
-本插件以 **DSH 动态插件** 形式开发并运行验证。在 DSH 会话里让 Agent 执行，或手动调用 `cordis_define` 工具：
+### 第 1 步：获取本包
 
-1. 克隆本仓库（或直接把本目录作为工作区）
-2. 修改 `src/host.js` 顶部 `CONFIG.spritePath` 为你的绝对路径：
+```bash
+git clone <本仓库地址> && cd YouAreSoBeautiful
+```
 
-   ```js
-   const CONFIG = {
-     spritePath: '/你的/路径/YouAreSoBeautiful/assets/spritesheet.webp',
-     routePath: '/beauty-dive/spritesheet.webp',
-   }
-   ```
+### 第 2 步：把包安装进你的 profile
 
-3. 生成一键安装载荷并粘贴给 `cordis_define` 工具：
+DSH 官方命令 `dsh plugin` 会把参数转发给 profile 目录下的 pnpm：
+
+```bash
+dsh plugin add <本仓库绝对路径>
+# 例：dsh plugin add /Users/you/YouAreSoBeautiful
+```
+
+或手动操作（与上面等价）：编辑 `$DSH_HOME/profiles/web/package.json`，在
+`dependencies` 里加入：
+
+```json
+{ "dependencies": { "dsh-beauty-dive-progress": "file:/Users/you/YouAreSoBeautiful" } }
+```
+
+然后在 profile 目录执行 `pnpm install`。
+
+### 第 3 步：在组成里插入插件行
+
+编辑 `$DSH_HOME/profiles/web/cordis.patch.yml`，在数组里插入：
+
+```yaml
+- insert:
+    - id: beauty-dive-progress
+      name: dsh-beauty-dive-progress
+      config:
+        playVoiceAtDone: true
+        # 素材默认取包内 assets/，一般无需配置；如需自定义：
+        # spritePath: /绝对路径/spritesheet.webp
+        # voicePath: /绝对路径/voice.mp3
+        # playCommand: (p) => "ffplay -nodisp -autoexit '" + p + "'"
+```
+
+### 第 4 步：重启 DSH
+
+```bash
+# 停止当前 dsh web 进程，再重新启动：
+dsh web
+```
+
+> 部分部署会热重载 `cordis.patch.yml`，但**新插件的首次加载以重启为准**。
+> 重启后浏览器刷新一次页面。
+
+### 第 5 步：验证
+
+```bash
+# 素材路由（应为 image/webp）
+curl -sI http://127.0.0.1:3080/beauty-dive/spritesheet.webp
+# 客户端 bundle 路由（应返回 JS 源码）
+curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
+```
+
+之后每次 DSH 回答问题的 Deep diving 期间，「Deep diving...」下方区块即出现坤宠进度条，
+完成时播放「你干嘛~哎哟」。
+
+## 🔛 启用 / 停用（enable / disable）
+
+插件行里预置了一行**注释掉的开关**，停用只需去掉注释：
+
+```yaml
+- insert:
+    - id: beauty-dive-progress
+      name: dsh-beauty-dive-progress
+      # ── 停用本插件：去掉下面这行前面的 "#" 注释 ──
+      # ── 重新启用：再把 "#" 加回行首 ──
+      # disabled: true
+      config:
+        playVoiceAtDone: true
+```
+
+**停用**：删除 `# disabled: true` 行首的 `#`；**启用**：把 `#` 加回去。
+改完重启 `dsh web` 生效（支持热重载的部署会自动生效，重启最稳妥）。
+停用后界面区块与提示音都立即消失，不影响 DSH 其它功能。
+
+## 🗑 卸载（uninstall）
+
+1. 从 `cordis.patch.yml` 中删除整个 `insert:` 段（含 `beauty-dive-progress` 行）；
+2. 移除包依赖（二选一）：
 
    ```bash
-   node scripts/build-package.mjs   # 生成 beauty.package.json
+   dsh plugin remove dsh-beauty-dive-progress
+   # 或手动：编辑 $DSH_HOME/profiles/web/package.json 删除该依赖，再 pnpm install
    ```
 
-   载荷结构（`kind: "new"` 创建新插件；后续更新用 `kind: "existing"` + `pluginId`）：
+3. 重启 `dsh web`。
 
-   ```json
-   {
-     "plugin": { "kind": "new", "idPrefix": "beauty" },
-     "name": "You Are So Beautiful · 深潜进度桌宠",
-     "purpose": "在 DSH 每次回答问题的 Deep diving 期间，用坤宠动图填满深潜状态行下方的区块：进度条 0%→100%，每 20% 切换动作与文案，完成时播放「完成啦！你干嘛~哎哟」。",
-     "code": { "host": "<src/host.js 内容>", "client": "<src/client.js 内容>" }
-   }
-   ```
+## 🔄 更新（update）
 
-4. 用 `cordis_run` 激活。之后每当 DSH 回答问题的 Deep diving 期间，「Deep diving...」下方区块即出现坤宠进度条。
+```bash
+cd <仓库目录> && git pull
+dsh plugin add <仓库目录>   # 重新链接（内容随源码实时生效）
+# 重启 dsh web
+```
 
-### 方式二：直接预览动画（无需 DSH）
+## 🧪 临时安装（动态插件，会话级）
 
-打开 `demo/index.html`（建议起个静态服务器，如 `npx serve .` 或 `python3 -m http.server`），
-即可播放/暂停/拖动进度，预览六档动作与文案。
+不写组成、只在**当前会话**生效（进程重启后需重新安装）。适合试用：
+
+1. 修改 `src/host.js` 顶部 `CONFIG` 的素材绝对路径（或保持默认）
+2. `node scripts/build-package.mjs` 生成 `beauty.package.json`
+3. 把载荷交给 DSH 会话里的 Agent 用 `cordis_define` + `cordis_run` 安装，或手动调用
+4. 移除：`cordis_undefine`（或让会话结束自动消失）
+
+> ⚠️ 动态插件与永久插件**不要同时启用**：两者注册同一条素材路由会冲突。
 
 ## 🎬 档位 → 动作 → 文案
 
@@ -115,21 +191,32 @@ YouAreSoBeautiful/
 
 ## ⚙️ 配置
 
-所有可调项集中在两处：
+**永久插件**：全部配置在 `cordis.patch.yml` 的插件行 `config` 里（见上文），
+支持 `spritePath` / `voicePath` / `routePath` / `playVoiceAtDone` / `pollMs` /
+`playCooldownMs` / `playCommand`，素材默认取包内 `assets/`。
 
-- `src/host.js` 顶部 `CONFIG`：精灵图本地路径、HTTP 路由路径、提示音路径
-  （`voicePath`）、完成是否播放（`playVoiceAtDone`）与系统播放命令
-  （`playCommand`，macOS 默认 `afplay` 已实测；Windows/Linux 请按注释替换，
-  未测试，详见上方「平台支持与已知限制」）
-- `src/client.js` 的 `STAGES`（每档文案/动作）、`MODEL`（通用自适应进度模型全部参数：
-  历史记忆条数、默认/最小预期时长、调速倍率、保留量、goal 轮询间隔）、`DONE_HOLD_MS`（完成停留时长）
+**动态插件**：`src/host.js` 顶部 `CONFIG`，以及 `src/client.js` 的 `STAGES`
+（每档文案/动作）与 `MODEL`（自适应进度模型全部参数）。
+
+**界面常量**（两种形态共用）：`lib/client.js` / `src/client.js` 的
+`STAGES` / `MODEL` / `DONE_HOLD_MS`。
 
 ## 🧰 校验与测试
 
 ```bash
-node scripts/validate.mjs   # 素材、源码、载荷完整性校验
-node scripts/build-package.mjs  # 重新生成安装载荷
+node scripts/validate.mjs        # 素材、双形态源码、载荷完整性校验
+node scripts/build-package.mjs   # 重新生成动态插件载荷
+npm run demo                     # 或 npx serve . 打开 demo/index.html 离线预览
 ```
+
+## 🛟 故障排查
+
+| 现象 | 排查 |
+| --- | --- |
+| 重启后 DSH 报插件行激活失败 | 确认第 2 步依赖已安装：profile 目录下 `node -e "require('dsh-beauty-dive-progress')"` 应成功 |
+| 区块不显示但路由正常 | 浏览器强刷（Cmd+Shift+R）；确认没有同时启用动态插件 |
+| 提示音不响 | 检查 `config.playVoiceAtDone`；macOS 用 `afplay`，其它系统按注释换 `playCommand` |
+| 想让插件不加载 | 插件行加 `disabled: true` 后重启（见「启用/停用」） |
 
 ## 📄 License
 

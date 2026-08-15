@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0（2025-08-15）
+
+- 升级为**永久插件**：可写入 DSH 组成（`cordis.patch.yml`），随 DSH 启动自动加载，无需每次会话重新激活
+  - 新增 `lib/host.js`（Host 半）：webServer 素材路由 + 轮询 agents 系统级播放完成提示音；素材默认取包内 `assets/`，路径与播放命令可经组成行 `config` 覆盖
+  - 新增 `lib/client.js`（Client 半）：手写 client bundle（`__ModuleLoader__` 契约），通过 `package.json` 的 `dsh.client` + `exports["./client"]` 声明被 dsh-client-modules 扫描加载；goal 进度改由会话投影 `useProjection('goal')` 客户端直读，无需 RPC
+  - `package.json` 升级为插件包清单（main / exports / dsh.client）
+- `src/` 动态插件源码与载荷保留，作为会话级安装的替代方式
+- README 新增永久插件的安装 / 卸载 / 启用 / 停用完整教程
+
 ## 1.2.0（2025-08-15）
 
 - 进度策略升级为**通用自适应模型**（替换固定时间常数曲线）：
