@@ -6,6 +6,7 @@
   - 仓库地址、包名、插件 id、素材路由、RPC（`ikun-pet-state/voice/goal`）、调试工具（`ikun_pet_debug`）、
     样式类（`.ikun-pet-*`）与文档一并更新；`beauty.package.json` → `ikun.package.json`
 - 文档：README 双语化——英文 `README.md`（主文档）+ 精简中文 `README.zh.md`，并新增深潜演示 GIF（`docs/demo.gif`）
+- 发布 npm 包：`dsh plugin add dsh-ikun-pet` 预构建安装（免 `allowBuilds` 构建授权），并声明官方 `@deepseek-ai/dsh-client-ui-conversation` 为可选 peerDependency
 
 ## 2.1.0（2025-08-15）
 

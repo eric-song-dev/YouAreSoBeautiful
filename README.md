@@ -3,6 +3,8 @@
 [![DSH Plugin](https://img.shields.io/badge/DSH-plugin-4d6bfe?style=flat-square&logo=deepseek)](https://github.com/eric-song-dev/dsh-ikun-pet)
 [![License](https://img.shields.io/github/license/eric-song-dev/dsh-ikun-pet?style=flat-square)](./LICENSE)
 [![Stars](https://img.shields.io/github/stars/eric-song-dev/dsh-ikun-pet?style=flat-square&logo=github)](https://github.com/eric-song-dev/dsh-ikun-pet/stargazers)
+[![npm](https://img.shields.io/npm/v/dsh-ikun-pet?style=flat-square&logo=npm)](https://www.npmjs.com/package/dsh-ikun-pet)
+[![Downloads](https://img.shields.io/npm/dm/dsh-ikun-pet?style=flat-square)](https://www.npmjs.com/package/dsh-ikun-pet)
 
 > 📖 中文文档：[README.zh.md](README.zh.md)
 
@@ -46,6 +48,12 @@ dsh plugin add "$PWD"
 ```bash
 dsh plugin add github:eric-song-dev/dsh-ikun-pet
 # or: dsh plugin add https://github.com/eric-song-dev/dsh-ikun-pet.git
+```
+
+**Option C: npm** (prebuilt — installs without the `allowBuilds` build-approval step)
+
+```bash
+dsh plugin add dsh-ikun-pet
 ```
 
 Then restart `dsh web` and refresh the browser. Verify:
