@@ -1,6 +1,6 @@
 {
   "name": "dsh-ikun-pet",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "dsh-ikun-pet · ikun 桌宠 —— DeepSeek Harness 永久插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案，完成时系统级播放提示音",
   "keywords": [
     "deepseek-harness",
