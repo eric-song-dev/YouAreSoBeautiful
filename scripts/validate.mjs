@@ -1,4 +1,4 @@
-// You Are So Beautiful · 深潜进度桌宠 · 仓库完整性校验
+// beauty-dive-progress · 深潜进度桌宠 · 仓库完整性校验
 // 用法：node scripts/validate.mjs
 // 检查：素材存在且格式正确、插件源码结构正确、精灵图尺寸符合 8×9 契约
 import { readFileSync, existsSync } from 'node:fs'

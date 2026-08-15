@@ -1,5 +1,5 @@
 // =============================================================================
-// You Are So Beautiful · 深潜进度桌宠（Client 半）
+// beauty-dive-progress · 深潜进度桌宠（Client 半）
 // 用于 DSH 的 cordis_define 工具：code.client 字段
 //
 // 职责：
@@ -423,7 +423,7 @@ return {
 
     // ---- 注册到「Deep diving...」正下方的整行区块 ----
     slots.inject('conversation.input.dock', () => slots.register(
-      { name: 'conversation.input.dock', id: 'beauty-dive-progress', order: 50, label: '深潜进度 · You Are So Beautiful' },
+      { name: 'conversation.input.dock', id: 'beauty-dive-progress', order: 50, label: '深潜进度 · beauty-dive-progress' },
       (props) => React.createElement(DiveProgress, props),
     ))
   },

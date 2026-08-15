@@ -12,7 +12,7 @@ const client = readFileSync(join(root, 'src', 'client.js'), 'utf-8')
 const payload = {
   // cordis_define 参数（kind: "new" 表示创建新插件）
   plugin: { kind: 'new', idPrefix: 'beauty' },
-  name: 'You Are So Beautiful · 深潜进度桌宠',
+  name: 'beauty-dive-progress · 深潜进度桌宠',
   purpose: '在 DSH 每次回答问题的 Deep diving 期间，用坤宠动图填满深潜状态行下方的区块：进度条 0%→100%，每 20% 切换动作与文案，完成时播放「完成啦！你干嘛~哎哟」。',
   code: { host, client },
 }

@@ -1,5 +1,5 @@
 // =============================================================================
-// You Are So Beautiful · 深潜进度桌宠（Host 半）
+// beauty-dive-progress · 深潜进度桌宠（Host 半）
 // 用于 DSH 的 cordis_define 工具：code.host 字段
 //
 // 职责：
@@ -14,11 +14,11 @@
 // ===== 配置区（按需修改） =====
 const CONFIG = {
   // 精灵图路径（8 列 × 9 行、每格 192×208 的 WebP，见 docs/SPRITESHEET-CONTRACT.md）
-  spritePath: '/Users/ericsong/test/project/dsh/YouAreSoBeautiful/assets/spritesheet.webp',
+  spritePath: '/Users/ericsong/test/project/dsh/beauty-dive-progress/assets/spritesheet.webp',
   // 素材路由路径（webServer 的 HTTP pathname，需全局唯一、勿与其它插件冲突）
   routePath: '/beauty-dive/spritesheet.webp',
   // 完成提示音路径（mp3）
-  voicePath: '/Users/ericsong/test/project/dsh/YouAreSoBeautiful/assets/voice.mp3',
+  voicePath: '/Users/ericsong/test/project/dsh/beauty-dive-progress/assets/voice.mp3',
   // 是否在深潜完成（100%）时播放提示音
   playVoiceAtDone: true,
   // 宿主进程系统级播放命令（macOS 用 afplay；Windows 可用 powershell -c (New-Object Media.SoundPlayer '...').PlaySync()；Linux 可用 ffplay -nodisp -autoexit）

@@ -1,4 +1,4 @@
-# 🐤 You Are So Beautiful · 深潜进度桌宠
+# 🐤 beauty-dive-progress · 深潜进度桌宠
 
 > DeepSeek Harness（DSH）插件 —— 只在 DSH **每次回答问题的 Deep diving 期间**，
 > 用坤宠动图**填满「Deep diving...」状态行下方的整行区块**：
@@ -37,7 +37,7 @@
 ## 🗂 项目结构
 
 ```
-YouAreSoBeautiful/
+beauty-dive-progress/
 ├── lib/
 │   ├── host.js            # 永久插件 Host 半：素材路由 + agents 轮询播放提示音
 │   └── client.js          # 永久插件 Client 半：client bundle（深潜区块 UI + 进度动画）
@@ -74,7 +74,7 @@ YouAreSoBeautiful/
 
 ```bash
 # 第 1 步：获取本包
-git clone <本仓库地址> && cd YouAreSoBeautiful
+git clone <本仓库地址> && cd beauty-dive-progress
 
 # 第 2 步：一条命令安装并自动注册
 dsh plugin add "$PWD"
@@ -86,9 +86,9 @@ dsh plugin add "$PWD"
 ### 方式 B：远程一条命令（适合纯使用者）
 
 ```bash
-dsh plugin add github:<你的用户名>/YouAreSoBeautiful
+dsh plugin add github:<你的用户名>/beauty-dive-progress
 # 或 HTTPS 地址：
-# dsh plugin add https://github.com/<你的用户名>/YouAreSoBeautiful.git
+# dsh plugin add https://github.com/<你的用户名>/beauty-dive-progress.git
 # 若已发布到 npm：
 # dsh plugin add dsh-beauty-dive-progress
 ```

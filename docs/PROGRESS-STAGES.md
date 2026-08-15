@@ -1,4 +1,4 @@
-# You Are So Beautiful · 深潜进度档位表
+# beauty-dive-progress · 深潜进度档位表
 
 DSH 每次回答问题的 Deep diving 期间，插件在「Deep diving...」状态行下方的整行区块渲染：
 
