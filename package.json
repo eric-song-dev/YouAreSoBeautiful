@@ -1,0 +1,29 @@
+{
+  "name": "dsh-beauty-dive-progress",
+  "version": "1.2.0",
+  "private": true,
+  "description": "You Are So Beautiful · 深潜进度桌宠 —— DeepSeek Harness 插件：在 DSH Deep diving 回答期间，用坤宠动图填满深潜状态行下方区块，进度 0%→100%，每 20% 切换动作与文案",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "plugin",
+    "deep-dive",
+    "progress",
+    "kun",
+    "桌宠"
+  ],
+  "license": "MIT",
+  "files": [
+    "src",
+    "assets",
+    "docs",
+    "demo",
+    "scripts",
+    "beauty.package.json"
+  ],
+  "scripts": {
+    "build": "node scripts/build-package.mjs",
+    "test": "node scripts/validate.mjs",
+    "demo": "npx --yes serve ."
+  }
+}

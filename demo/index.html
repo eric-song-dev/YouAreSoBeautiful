@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>You Are So Beautiful · 深潜进度桌宠 Demo</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --border: #e2e5ea;
+    --text: #333333;
+    --sub: #8a919c;
+    --brand: #4d6bfe;
+    --success: #2fbf71;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--sub); font-size: 13px; margin: 0 0 28px; text-align: center; }
+
+  .stage-wrap {
+    width: min(760px, 100%);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 18px 18px;
+  }
+
+  /* —— 与插件一致的深潜面板 —— */
+  .beauty-dive {
+    position: relative;
+    width: 100%;
+    padding: 8px 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel);
+    box-shadow: 0 6px 24px rgba(20, 30, 60, 0.06);
+  }
+  .beauty-dive-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 2px; }
+  .beauty-dive-text { font-size: 12px; line-height: 18px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .beauty-dive-pct { flex: none; font-size: 12px; line-height: 18px; font-weight: 600; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .beauty-dive-stage { position: relative; height: 58px; }
+  .beauty-dive-pet { position: absolute; bottom: 0; transform: translateX(-50%); pointer-events: none; z-index: 2; }
+  .beauty-dive-sprite { position: absolute; inset: 0; background-repeat: no-repeat; image-rendering: pixelated; }
+  .beauty-dive-track { position: relative; height: 8px; border-radius: 6px; background: #eef0f4; overflow: hidden; }
+  .beauty-dive-fill { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: var(--brand); transition: width 150ms linear; }
+  .beauty-dive-fill::after {
+    content: ''; position: absolute; inset: 0; border-radius: 6px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+    background-size: 200% 100%; animation: sheen 1.6s linear infinite;
+  }
+  .beauty-dive-fill-done { background: var(--success); }
+  @keyframes sheen { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .controls button {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .controls button:hover { background: #f0f2f6; }
+  .controls label { font-size: 13px; color: var(--sub); display: flex; align-items: center; gap: 8px; flex: 1; min-width: 220px; }
+  .controls input[type="range"] { flex: 1; }
+
+  table { width: min(760px, 100%); margin-top: 26px; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  th, td { padding: 9px 14px; font-size: 13px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: #fafbfc; color: var(--sub); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  code { background: #f0f2f6; border-radius: 5px; padding: 1px 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+  <h1>🐤 You Are So Beautiful · 深潜进度桌宠</h1>
+  <p class="sub">DSH Deep diving 时填满「深潜状态行」下方区块：进度 0%→100%，每 20% 切换动图动作与文案</p>
+
+  <div class="stage-wrap">
+    <div class="beauty-dive" id="dive" aria-hidden="true">
+      <div class="beauty-dive-meta">
+        <span class="beauty-dive-text" id="text">深潜启动！准备出发…</span>
+        <span class="beauty-dive-pct" id="pct">0%</span>
+      </div>
+      <div class="beauty-dive-stage">
+        <div class="beauty-dive-pet" id="pet" style="width:51.84px;height:56.16px;">
+          <div class="beauty-dive-sprite" id="sprite"></div>
+        </div>
+      </div>
+      <div class="beauty-dive-track">
+        <div class="beauty-dive-fill" id="fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="toggle">▶ 开始深潜</button>
+      <button id="finish">⏭ 直接完成</button>
+      <label>进度（拖动预览各档位）
+        <input type="range" id="seek" min="0" max="100" step="1" value="0" />
+      </label>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>进度档位</th><th>动图动作</th><th>文案</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0% – 20%</td><td>waiting（期待）</td><td>深潜启动！准备出发…</td></tr>
+      <tr><td>20% – 40%</td><td>runRight（向右跑）</td><td>正在收集线索…</td></tr>
+      <tr><td>40% – 60%</td><td>working（专注干活）</td><td>埋头苦干中…</td></tr>
+      <tr><td>60% – 80%</td><td>review（思考审阅）</td><td>认真思考中…</td></tr>
+      <tr><td>80% – 100%</td><td>wave（挥手）</td><td>快好啦！马上见结果~</td></tr>
+      <tr><td>100%（完成）</td><td>jump（跳跃庆祝）</td><td>完成啦！你干嘛~哎哟</td></tr>
+    </tbody>
+  </table>
+
+<script>
+  // 与插件 src/client.js 完全一致的契约：8 列 × 9 行、每格 192×208
+  const SCALE = 0.27
+  const W = 192 * SCALE, H = 208 * SCALE
+  const ROWS = {
+    waiting:  { row: 6, count: 6, frames: [150, 150, 150, 150, 150, 260] },
+    runRight: { row: 1, count: 8, frames: [120, 120, 120, 120, 120, 120, 120, 220] },
+    working:  { row: 7, count: 6, frames: [120, 120, 120, 120, 120, 220] },
+    review:   { row: 8, count: 6, frames: [150, 150, 150, 150, 150, 280] },
+    wave:     { row: 3, count: 4, frames: [140, 140, 140, 280] },
+    jump:     { row: 4, count: 5, frames: [140, 140, 140, 140, 280] },
+  }
+  const STAGES = [
+    { upTo: 20,  anim: 'waiting',  text: '深潜启动！准备出发…' },
+    { upTo: 40,  anim: 'runRight', text: '正在收集线索…' },
+    { upTo: 60,  anim: 'working',  text: '埋头苦干中…' },
+    { upTo: 80,  anim: 'review',   text: '认真思考中…' },
+    { upTo: 100, anim: 'wave',     text: '快好啦！马上见结果~' },
+  ]
+  const DONE_TEXT = '完成啦！你干嘛~哎哟'
+
+  const sprite = document.getElementById('sprite')
+  const pet = document.getElementById('pet')
+  const fill = document.getElementById('fill')
+  const textEl = document.getElementById('text')
+  const pctEl = document.getElementById('pct')
+  const seek = document.getElementById('seek')
+  const toggle = document.getElementById('toggle')
+
+  sprite.style.backgroundImage = 'url("../assets/spritesheet.webp")'
+  sprite.style.backgroundSize = (W * 8) + 'px ' + (H * 9) + 'px'
+
+  let progress = 0, done = false, running = false
+  let anim = 'waiting', frame = 0
+
+  function stageOf(p) {
+    for (const s of STAGES) if (p < s.upTo) return s
+    return STAGES[STAGES.length - 1]
+  }
+
+  function render() {
+    const spec = ROWS[anim]
+    const col = frame % spec.count
+    sprite.style.backgroundPosition = (-col * W) + 'px ' + (-spec.row * H) + 'px'
+    fill.style.width = progress + '%'
+    fill.classList.toggle('beauty-dive-fill-done', done)
+    pet.style.left = (3 + progress * 0.94) + '%'
+    pctEl.textContent = Math.round(progress) + '%'
+    textEl.textContent = done ? DONE_TEXT : stageOf(progress).text
+  }
+
+  // 逐帧播放（真实时间驱动）
+  let frameTimer = null
+  function stepFrame() {
+    const spec = ROWS[anim]
+    frame = (frame + 1) % spec.count
+    render()
+    frameTimer = setTimeout(stepFrame, spec.frames[frame] || 150)
+  }
+  function setAnim(name) {
+    if (name === anim) return
+    anim = name
+    frame = 0
+    clearTimeout(frameTimer)
+    stepFrame()
+  }
+
+  // 进度推进（与插件一致的渐近曲线 + 100ms 刻度）
+  let runTimer = null, startedAt = 0
+  function tick() {
+    if (!running) return
+    const elapsed = Date.now() - startedAt
+    const target = Math.min(94, 94 * (1 - Math.exp(-elapsed / 38000)))
+    progress = Math.floor(target * 10) / 10
+    if (progress < 94) setAnim(stageOf(progress).anim)
+    render()
+    runTimer = setTimeout(tick, 150)
+  }
+
+  toggle.addEventListener('click', () => {
+    if (running) {
+      running = false
+      clearTimeout(runTimer)
+      toggle.textContent = '▶ 继续深潜'
+      return
+    }
+    if (done) { done = false }
+    running = true
+    startedAt = Date.now()
+    toggle.textContent = '⏸ 暂停'
+    seek.value = 0
+    progress = 0
+    setAnim('waiting')
+    tick()
+  })
+
+  document.getElementById('finish').addEventListener('click', () => {
+    running = false
+    clearTimeout(runTimer)
+    done = true
+    progress = 100
+    seek.value = 100
+    setAnim('jump')
+    render()
+    toggle.textContent = '▶ 重新深潜'
+    // 与插件一致：完成时播放「你干嘛~哎哟」（demo 用浏览器 Audio，插件由宿主进程系统级播放）
+    const voice = new Audio('../assets/voice.mp3')
+    const p = voice.play()
+    if (p && typeof p.catch === 'function') p.catch(() => {})
+  })
+
+  seek.addEventListener('input', () => {
+    running = false
+    clearTimeout(runTimer)
+    done = false
+    progress = Number(seek.value)
+    setAnim(stageOf(progress).anim)
+    render()
+    toggle.textContent = '▶ 开始深潜'
+  })
+
+  setAnim('waiting')
+  render()
+</script>
+</body>
+</html>
