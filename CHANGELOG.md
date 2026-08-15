@@ -10,6 +10,7 @@
   也支持按 id 覆盖（停用/改配置）
 - 卸载简化为 `dsh plugin remove dsh-beauty-dive-progress`（bundles 层自动对账）
 - 文档：新增「关闭 / 调整完成音效」章节（用户补丁层覆盖或改包内补丁两种方式）
+- 文档：安装章节新增「方式 B：远程一条命令」（`dsh plugin add github:...`），与克隆安装并存
 
 ## 2.0.0（2025-08-15）
 

@@ -68,24 +68,40 @@ YouAreSoBeautiful/
 本包声明了 `dsh.bundle`（自带组成补丁层），因此 **`dsh plugin add` 一条命令
 会自动完成安装 + 组成注册**，无需手动编辑任何配置文件。
 
-### 第 1 步：获取本包
+安装方式分两种，按你的身份二选一：
+
+### 方式 A：克隆安装（适合想魔改插件的人）
 
 ```bash
+# 第 1 步：获取本包
 git clone <本仓库地址> && cd YouAreSoBeautiful
+
+# 第 2 步：一条命令安装并自动注册
+dsh plugin add "$PWD"
 ```
 
-### 第 2 步：一条命令安装并自动注册
+克隆安装是**活链接**：profile 里指向的是你的仓库目录，改文案、调参数
+（`STAGES` / `MODEL`）之后重启即生效，适合开发者和想定制的人。
+
+### 方式 B：远程一条命令（适合纯使用者）
 
 ```bash
-dsh plugin add <本仓库绝对路径>
-# 例：dsh plugin add /Users/you/YouAreSoBeautiful
+dsh plugin add github:<你的用户名>/YouAreSoBeautiful
+# 或 HTTPS 地址：
+# dsh plugin add https://github.com/<你的用户名>/YouAreSoBeautiful.git
+# 若已发布到 npm：
+# dsh plugin add dsh-beauty-dive-progress
 ```
 
-该命令会：① 把本包安装进 profile 依赖；② 检测到包声明了 `dsh.bundle`，
-**自动把包名加入 `dsh.profile.bundles` 层列表**——启动时 DS H会自动应用
-包内 `cordis.patch.yml` 里的插件行，这一步就是旧版教程里"手动插入插件行"的自动化。
+要求：本机已安装 git（私有仓库需先配好 SSH 访问）。远程安装的包在
+pnpm 存储里（只读），个性化只能通过**用户补丁层**覆盖 `config`
+（见下方「启用 / 停用」与「关闭音效」），改不了插件内部逻辑。
 
-### 第 3 步：重启 DSH 并验证
+两种方式的效果相同，都会：① 把本包装进 profile 依赖；② 检测到包声明了
+`dsh.bundle`，**自动把包名加入 `dsh.profile.bundles` 层列表**——启动时 DSH
+会自动应用包内 `cordis.patch.yml` 里的插件行。
+
+### 最后一步：重启 DSH 并验证
 
 ```bash
 # 停止当前 dsh web 进程，再重新启动：
