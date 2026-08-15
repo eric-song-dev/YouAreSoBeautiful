@@ -128,11 +128,15 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
 **启用**：把 `#` 加回去。改完重启 `dsh web`。
 
 **不想动仓库文件时**：也可以在你的 `$DSH_HOME/profiles/web/cordis.patch.yml`
-（用户补丁层，在 bundle 层之后应用）里加覆盖：
+（用户补丁层，在 bundle 层之后应用）里加覆盖——`disabled` 开关与
+`config` 覆盖可以放在同一条目里：
 
 ```yaml
 - id: beauty-dive-progress
-  disabled: true          # 停用；删除这行即重新启用
+  # 停用整个插件：去掉下面这行前面的 "#" 注释（config 可以同时保留）
+  # disabled: true
+  config:
+    playVoiceAtDone: false   # 例如：顺带关闭完成音效
 ```
 
 停用后界面区块与提示音都立即消失，不影响 DSH 其它功能。
@@ -148,6 +152,8 @@ curl -s http://127.0.0.1:3080/plugins/dsh-beauty-dive-progress/client.js
   config:
     playVoiceAtDone: false
 ```
+
+也可以把 `disabled` 开关和 `config` 写在同一条目里（见「启用 / 停用」节的示例）。
 
 **方式 B：直接改仓库**——把包内 `cordis.patch.yml` 插件行 `config` 里的
 `playVoiceAtDone` 改为 `false`（对所有使用者生效）。
